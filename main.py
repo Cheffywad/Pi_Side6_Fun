@@ -2,12 +2,17 @@ import sys
 from PySide6.QtWidgets import QApplication, QWidget
 
 from main_window import MainWindow
+from button_clicking import ButtonClicking
+from text_editor import TextEditor
 
 
 
 app = QApplication(sys.argv)
 window = MainWindow(app)
 window.show()
+
+widget = TextEditor()
+widget.show()
 
 app.exec()
 
