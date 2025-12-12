@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 import pyqtgraph
 import numpy as np
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore
 from PySide6.QtGui import QFont
 from random import randint
 
@@ -13,8 +13,8 @@ class LiveGraph(QWidget):
         self.graph2 = self.graph_setup('#FFFFFF', 'test', 'k','20pt', 'Times New Roman', '#000000', '14pt', 'xaxis', 'C', 'yaxis', 'K')
 
         self.time = [1,2,3,4,5,6,7,8,9,10]
-        xarr = np.linspace(0, 4*np.pi, 100)
-        yarr1 = np.sin(xarr)
+        self.xarr = np.linspace(0, 4*np.pi, 100)
+        self.yarr1 = np.sin(self.xarr)
         
         self.temperature = [30,32,34,32,33,31,29,32,35,45]
 
@@ -26,13 +26,13 @@ class LiveGraph(QWidget):
         # self.graph1.setXRange(1, 10, padding=0.1)
         self.graph1.setYRange(30,45, padding=0.1)
         # self.graph2.setXRange(, 10, padding=0.1)
-        self.graph2.setYRange(np.min(yarr1),np.max(yarr1), padding=0.05)
+        # self.graph2.setYRange(np.min(yarr1),np.max(yarr1), padding=0.05)
 
         penTemp = pyqtgraph.mkPen(color=(255, 0, 0), width=2, style=QtCore.Qt.DashLine)
         penHum = pyqtgraph.mkPen(color=(255, 0, 0), width=2, style=QtCore.Qt.DashLine)
 
         self.line1 = self.graph1.plot(self.time, self.temperature, name="Temperature", symbol='+', symbolSize=10, symbolBrush=('g'))
-        self.line2 = self.graph2.plot(xarr, yarr1, name="Temperature")   
+        self.line2 = self.graph2.plot(self.xarr, self.yarr1, name="Temperature")   
         
         h_layout = QHBoxLayout()
         v_layout = QVBoxLayout()
@@ -43,14 +43,19 @@ class LiveGraph(QWidget):
         self.timer = QtCore.QTimer()
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.plot_update_rand)
-        self.timer.timeout.connect(self.numpy_graph_update(xarr, yarr1))
+
+        self.xarr, self.yarr1 = self.numpy_graph_update(self.xarr, self.yarr1)
+        self.timer.timeout.connect(self.line2.setData(self.xarr, self.yarr1))
+
         self.timer.start()
 
     def numpy_graph_update(self, xarr, yarr):
         xarr_diff = np.average(np.diff(xarr))
 
         xarr_new_val = xarr_diff+xarr[-1]
+        
         yarr_new_val = np.sin(xarr_new_val)
+        print(xarr_diff, " : ", xarr[-1], " : ", xarr_new_val, " : ", yarr_new_val)
 
         xarr = np.append(xarr, xarr_new_val)
         yarr = np.append(yarr, yarr_new_val)
@@ -58,7 +63,7 @@ class LiveGraph(QWidget):
         xarr = np.delete(xarr, 0)
         yarr = np.delete(yarr, 0)
 
-        self.line2.setData(xarr, yarr)
+        return xarr, yarr
 
     def plot_update_rand(self):
         self.time = self.time[1:]

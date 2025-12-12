@@ -7,7 +7,6 @@ class StaticBox(QWidget):
         super().__init__()
         self.setWindowTitle("Message Boxes")
         
-
         button_hard = QPushButton("Hard")
         button_hard.clicked.connect(self.button_clicked_hard)
 
