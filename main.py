@@ -1,17 +1,14 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtWidgets import QApplication
 
-from main_window import MainWindow
-from button_clicking import ButtonClicking
-from text_editor import TextEditor
-
-
+# from main_window import MainWindow
+# from button_clicking import ButtonClicking
+# from text_editor import TextEditor
+from live_graph import LiveGraph
 
 app = QApplication(sys.argv)
-window = MainWindow(app)
-window.show()
 
-widget = TextEditor()
+widget = LiveGraph()
 widget.show()
 
 app.exec()
